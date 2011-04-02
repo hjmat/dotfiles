@@ -40,5 +40,7 @@
       c-basic-offset 4)
 
 ;; Haskell
+(require 'inf-haskell) ;; Inferior Haskell
+(setq haskell-font-lock-symbols t) ;; Fancy unicode lambdas
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
