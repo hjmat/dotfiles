@@ -18,11 +18,10 @@
 (line-number-mode 1)
 (column-number-mode 1)
 
-;; Colouring
+;; Colours, fonts etc
 (require 'font-lock)
 (setq font-lock-maximum-decoration t)
 (global-font-lock-mode t)
-(set-default-font "-*-courier-*-12-*-mac-roman")
 (set-face-background 'region "yellow")
 (set-variable 'tool-bar-mode nil)
 
@@ -31,7 +30,8 @@
 (setq show-paren-style 'parenthesis)
 (setq show-paren-delay 0)
 
-;; Commenting
+;; Comments and other shortcuts
+(global-set-key "\C-c\C-a" 'mark-whole-buffer)
 (global-set-key "\C-c\C-c" 'comment-region)
 (global-set-key "\C-c\C-v" 'uncomment-region)
 
@@ -41,6 +41,8 @@
 
 ;; Haskell
 (require 'inf-haskell) ;; Inferior Haskell
-(setq haskell-font-lock-symbols t) ;; Fancy unicode lambdas
+(require 'speedbar)
+(speedbar-add-supported-extension ".hs")
+
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
