@@ -2,8 +2,9 @@
 ;; This is my .emacs, there are many like it but this one is mine.
 ;;
 
-;; Paths
+;; Startup
 (add-to-list 'load-path "~/.emacs.d/")
+(setq inhibit-startup-message t)
 
 ;; Backups
 (defun make-backup-file-name (file)
@@ -13,17 +14,17 @@
 (setq tab-width 4)
 (setq-default indent-tabs-mode nil)
 
-;; Navigation
-(setq scroll-step 1)
-(line-number-mode 1)
-(column-number-mode 1)
-
-;; Colours, fonts etc
+;; Look and feel
 (require 'font-lock)
 (setq font-lock-maximum-decoration t)
 (global-font-lock-mode t)
 (set-face-background 'region "yellow")
 (set-variable 'tool-bar-mode nil)
+(global-hl-line-mode t)
+(setq scroll-step 1)
+(line-number-mode 1)
+(column-number-mode 1)
+(setq-default show-trailing-whitespace t)
 
 ;; Parenthesis matching
 (show-paren-mode t)
@@ -43,6 +44,5 @@
 (require 'inf-haskell) ;; Inferior Haskell
 (require 'speedbar)
 (speedbar-add-supported-extension ".hs")
-
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
