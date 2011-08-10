@@ -49,13 +49,15 @@
             (speedbar-add-supported-extension ".hs")
             (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
             (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-            ))
+            )
+          )
 
 ;; Auto-complete
 (featurep 'auto-complete-config
           (progn
             (require 'auto-complete-config)
             (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-            (ac-config-default))
-          ))
+            (ac-config-default)
+            )
+          )
 
