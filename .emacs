@@ -41,8 +41,21 @@
       c-basic-offset 4)
 
 ;; Haskell
-(require 'inf-haskell) ;; Inferior Haskell
-(require 'speedbar)
-(speedbar-add-supported-extension ".hs")
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(featurep 'haskell-mode
+          (progn
+            (require 'haskell-mode)
+            (featurep 'inf-haskell (require 'inf-haskell))
+            (require 'speedbar)
+            (speedbar-add-supported-extension ".hs")
+            (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+            (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+            ))
+
+;; Auto-complete
+(featurep 'auto-complete-config
+          (progn
+            (require 'auto-complete-config)
+            (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+            (ac-config-default))
+          ))
+
