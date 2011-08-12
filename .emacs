@@ -1,5 +1,5 @@
-;;
-;; This is my .emacs, there are many like it but this one is mine.
+;;; .emacs --- This is my .emacs, there are many like it but this one is mine.
+;; Dependencies: haskell-mode, inferior haskell, speedbar, auto-complete 1.3.1
 ;;
 
 ;; Startup
@@ -8,7 +8,7 @@
 
 ;; Backups
 (defun make-backup-file-name (file)
-(concat "~/.emacs_backups/" (file-name-nondirectory file) "~"))
+  (concat "~/.emacs.d/auto-save-list" (file-name-nondirectory file) "~"))
 
 ;; Tabs
 (setq tab-width 4)
@@ -41,23 +41,28 @@
       c-basic-offset 4)
 
 ;; Haskell
-(featurep 'haskell-mode
-          (progn
-            (require 'haskell-mode)
-            (featurep 'inf-haskell (require 'inf-haskell))
-            (require 'speedbar)
-            (speedbar-add-supported-extension ".hs")
-            (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-            (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-            )
-          )
+(defun configure-my-haskell-mode ()
+  (progn
+    (require 'haskell-mode)
+    (require 'speedbar)
+    (featurep 'inf-haskell (require 'inf-haskell))
+    (speedbar-add-supported-extension ".hs")
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+    (message "Haskell configured")
+    )
+  )
+
+(featurep 'haskell-mode 'configure-my-haskell-mode)
 
 ;; Auto-complete
-(featurep 'auto-complete-config
-          (progn
-            (require 'auto-complete-config)
-            (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-            (ac-config-default)
-            )
-          )
+(defun configure-my-ac-mode ()
+  (progn
+    (require 'auto-complete-config)
+    (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+    (ac-config-default)
+    (message "Auto-complete configured")
+    )
+  )
 
+(featurep 'auto-complete-config 'configure-my-ac-mode)
