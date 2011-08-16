@@ -40,29 +40,33 @@
 (setq c-default-style "stroustrup"
       c-basic-offset 4)
 
+;; soft-require
+;; If the feature f exists, load and (optionally) configure it with the function
+;; cfg-fun
+(defun soft-require (f &optional cfg-fun)
+    (when (require f nil t)
+      (progn
+        (when cfg-fun (funcall cfg-fun))
+        (message (format "'%s' loaded" f)))
+      )
+    )
+
 ;; Haskell
 (defun configure-my-haskell-mode ()
   (progn
-    (require 'haskell-mode)
-    (require 'speedbar)
-    (featurep 'inf-haskell (require 'inf-haskell))
-    (speedbar-add-supported-extension ".hs")
+    (soft-require 'inf-haskell)
+    (soft-require 'speedbar (lambda () (speedbar-add-supported-extension ".hs")))
     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-    (message "Haskell configured")
     )
   )
-
-(featurep 'haskell-mode 'configure-my-haskell-mode)
+(soft-require 'haskell-mode 'configure-my-haskell-mode)
 
 ;; Auto-complete
 (defun configure-my-ac-mode ()
   (progn
-    (require 'auto-complete-config)
     (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
     (ac-config-default)
-    (message "Auto-complete configured")
     )
   )
-
-(featurep 'auto-complete-config 'configure-my-ac-mode)
+(soft-require 'auto-complete-config 'configure-my-ac-mode)
