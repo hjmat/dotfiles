@@ -36,14 +36,9 @@
 (global-set-key "\C-c\C-c" 'comment-region)
 (global-set-key "\C-c\C-v" 'uncomment-region)
 
-;; C
-(setq c-default-style "stroustrup"
-      c-basic-offset 4)
-
 ;; soft-require
-;; If the feature f exists, load and (optionally) configure it with the function
-;; cfg-fun
 (defun soft-require (f &optional cfg-fun)
+  "If the feature f exists, load and configure it with the function cfg-fun"
   (when (require f nil t)
     (progn
       (when cfg-fun (funcall cfg-fun))
@@ -51,22 +46,33 @@
     )
   )
 
+(defun electric-pair ()
+      (interactive)
+      (if (eolp) (let (parens-require-spaces) (insert-pair)) (self-insert-command 1)))
+
+;; Auto-complete
+(defun configure-my-ac-mode ()
+    (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+    (ac-config-default)
+  )
+(soft-require 'auto-complete-config 'configure-my-ac-mode)
+
+;; C
+(setq c-default-style "stroustrup"
+      c-basic-offset 4)
+
 ;; Haskell
+(defun haskell-electric-pair ()
+  (define-key haskell-mode-map "(" 'electric-pair)
+  (define-key haskell-mode-map "[" 'electric-pair)
+  (define-key haskell-mode-map "{" 'electric-pair)
+  )
+
 (defun configure-my-haskell-mode ()
-  (progn
     (soft-require 'inf-haskell)
     (soft-require 'speedbar (lambda () (speedbar-add-supported-extension ".hs")))
     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-    )
+    (add-hook 'haskell-mode-hook 'haskell-electric-pair)
   )
 (soft-require 'haskell-mode 'configure-my-haskell-mode)
-
-;; Auto-complete
-(defun configure-my-ac-mode ()
-  (progn
-    (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-    (ac-config-default)
-    )
-  )
-(soft-require 'auto-complete-config 'configure-my-ac-mode)
