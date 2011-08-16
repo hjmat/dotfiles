@@ -44,12 +44,12 @@
 ;; If the feature f exists, load and (optionally) configure it with the function
 ;; cfg-fun
 (defun soft-require (f &optional cfg-fun)
-    (when (require f nil t)
-      (progn
-        (when cfg-fun (funcall cfg-fun))
-        (message (format "'%s' loaded" f)))
-      )
+  (when (require f nil t)
+    (progn
+      (when cfg-fun (funcall cfg-fun))
+      (message (format "'%s' loaded" f)))
     )
+  )
 
 ;; Haskell
 (defun configure-my-haskell-mode ()
