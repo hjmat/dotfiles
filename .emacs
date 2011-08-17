@@ -40,20 +40,21 @@
 (defun soft-require (f &optional cfg-fun)
   "If the feature f exists, load and configure it with the function cfg-fun"
   (when (require f nil t)
-    (progn
-      (when cfg-fun (funcall cfg-fun))
-      (message (format "'%s' loaded" f)))
-    )
+    (when cfg-fun (funcall cfg-fun))
+    (message "'%s' loaded" f))
   )
 
+;; Electric pair
 (defun electric-pair ()
-      (interactive)
-      (if (eolp) (let (parens-require-spaces) (insert-pair)) (self-insert-command 1)))
+  (interactive)
+  (if (eolp)
+      (let (parens-require-spaces) (insert-pair)) (self-insert-command 1))
+  )
 
 ;; Auto-complete
 (defun configure-my-ac-mode ()
-    (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-    (ac-config-default)
+  (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+  (ac-config-default)
   )
 (soft-require 'auto-complete-config 'configure-my-ac-mode)
 
@@ -69,10 +70,11 @@
   )
 
 (defun configure-my-haskell-mode ()
-    (soft-require 'inf-haskell)
-    (soft-require 'speedbar (lambda () (speedbar-add-supported-extension ".hs")))
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-    (add-hook 'haskell-mode-hook 'haskell-electric-pair)
+  (soft-require 'inf-haskell)
+  (soft-require 'speedbar (lambda () (speedbar-add-supported-extension ".hs")))
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+  (add-hook 'haskell-mode-hook 'haskell-electric-pair)
+  (featurep 'auto-complete-config (add-to-list 'ac-modes 'haskell-mode))
   )
 (soft-require 'haskell-mode 'configure-my-haskell-mode)
