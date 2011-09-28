@@ -28,11 +28,11 @@
 (when platform-config
   (funcall (cdr platform-config))
   (message (format "Set up for '%s'" (car platform-config)))
-)
+  )
 
 ;; Backups
 (defun make-backup-file-name (file)
-  (concat emacs-d "auto-save-list/" (file-name-nondirectory file) "~"))
+  (concat emacs-d "/auto-save-list/" (file-name-nondirectory file) "~"))
 
 ;; Tabs
 (setq tab-width 4)
@@ -86,8 +86,7 @@
 (soft-require 'auto-complete-extension)
 
 ;; C
-(setq c-default-style "stroustrup"
-      c-basic-offset 4)
+(setq c-default-style "stroustrup" c-basic-offset 4)
 
 ;; Haskell
 (defun haskell-electric-pair ()
@@ -116,6 +115,27 @@
 (defun configure-my-erlang-mode ()
   (setq erlang-root-dir erlang-home)
   (setq erlang-bin-dir (concat erlang-root-dir "/bin"))
-  (setq exec-path (cons erlang-bin-dir exec-path))
-  )
+  (setq exec-path (cons erlang-bin-dir exec-path)))
 (soft-require 'erlang-start 'configure-my-erlang-mode)
+
+;; Automagically bytecompile .emacs
+(defun last-write (filename)
+  (if (file-exists-p filename)
+      (nth 5 (file-attributes filename))
+    '(0 0)
+    )
+  )
+
+(defun file-is-newer (file1 file2)
+  (setq time1 (last-write file1))
+  (setq time2 (last-write file2))
+  (if (> (car time1) (car time2))
+      't
+    (if (eq (car time1) (car time2))
+        (> (car (cdr time1)) (car (cdr time2)))
+      'nil)
+    )
+  )
+
+(when (file-is-newer "~/.emacs" "~/.emacs.elc")
+  (byte-compile-file "~/.emacs"))
