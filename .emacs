@@ -1,21 +1,27 @@
 ;;; .emacs --- This is my .emacs, there are many like it but this one is mine.
-;; Dependencies: haskell-mode, inferior haskell, speedbar, auto-complete 1.3.1,
-;;               erlang-mode
+;;
+;; Dependencies:
+;;   - haskell-mode     https://github.com/haskell/haskell-mode
+;;   - auto-complete    http://cx4a.org/software/auto-complete/
+;;   - erlang-mode      packaged with erlang otp
+;;   - edts             https://github.com/tjarvstrand/edts
+;;
+;; Paths
+;;   - ~/.emacs.d is the assumed root for all resources
+;;   - el packages are installed in elisp
+;;   - auto-complete dictionaries are stored in ac-dict
+;;   - backups are stored in auto-save-list
+;;
 
 ;; Startup
 (setq emacs-d "~/.emacs.d")
 (setq local-elisp-path (concat emacs-d "/elisp"))
 (add-to-list 'load-path emacs-d)
 (add-to-list 'load-path local-elisp-path)
-(add-to-list 'load-path (concat local-elisp-path "/auto-complete"))
-(add-to-list 'load-path (concat local-elisp-path "/haskell-mode"))
-(add-to-list 'load-path (concat local-elisp-path "/erlang"))
 
-;; package.el
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-initialize)
+(if (getenv "ERLANG_HOME")
+    (setq erlang-root-dir (getenv "ERLANG_HOME"))
+  )
 
 ;; Backups
 (defun make-backup-file-name (file)
@@ -63,6 +69,7 @@
   )
 
 ;; Auto-complete
+(add-to-list 'load-path (concat local-elisp-path "/auto-complete"))
 (defun configure-my-ac-mode ()
   (add-to-list 'ac-dictionary-directories (concat emacs-d "/ac-dict"))
   (ac-config-default)
@@ -70,10 +77,13 @@
 (soft-require 'auto-complete-config 'configure-my-ac-mode)
 (soft-require 'auto-complete-extension)
 
+;; Language customizations -----------------------------------------------------
+
 ;; C
 (setq c-default-style "stroustrup" c-basic-offset 4)
 
 ;; Haskell
+(add-to-list 'load-path (concat local-elisp-path "/haskell-mode"))
 (defun haskell-electric-pair ()
   (define-key haskell-mode-map "(" 'electric-pair)
   (define-key haskell-mode-map "[" 'electric-pair)
@@ -96,11 +106,21 @@
   )
 (soft-require 'haskell-mode 'configure-my-haskell-mode)
 
-;; Erlang
-(setq erlang-root-dir "/opt/local/lib/erlang")
-(setq erlang-bin-dir (concat erlang-root-dir "/bin"))
-(setq exec-path (cons erlang-bin-dir exec-path))
-(soft-require 'erlang-start)
+;; Erlang with EDTS
+(defun configure-my-erlang-mode ()
+  (add-to-list 'load-path (concat local-elisp-path "/erlang"))
+  (add-to-list 'load-path (concat local-elisp-path "/edts"))
+  (setq erlang-bin-dir (concat erlang-root-dir "/bin"))
+  (setq exec-path (cons erlang-bin-dir exec-path))
+  (soft-require 'erlang-start)
+  (soft-require 'edts-start)
+)
+
+(when (boundp 'erlang-root-dir)
+  (configure-my-erlang-mode)
+  )
+
+;; End of language customizations ----------------------------------------------
 
 ;; Automagically bytecompile .emacs
 (defun last-write (filename)
