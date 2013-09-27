@@ -19,10 +19,6 @@
 (add-to-list 'load-path emacs-d)
 (add-to-list 'load-path local-elisp-path)
 
-(if (getenv "ERLANG_HOME")
-    (setq erlang-root-dir (getenv "ERLANG_HOME"))
-  )
-
 ;; Backups
 (defun make-backup-file-name (file)
   (concat emacs-d "/auto-save-list/" (file-name-nondirectory file) "~"))
@@ -107,6 +103,10 @@
 (soft-require 'haskell-mode 'configure-my-haskell-mode)
 
 ;; Erlang with EDTS
+(when (getenv "ERLANG_HOME")
+    (setq erlang-root-dir (getenv "ERLANG_HOME"))
+  )
+
 (defun configure-my-erlang-mode ()
   (add-to-list 'load-path (concat local-elisp-path "/erlang"))
   (add-to-list 'load-path (concat local-elisp-path "/edts"))
