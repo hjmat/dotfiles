@@ -18,10 +18,20 @@
 (setq local-elisp-path (concat emacs-d "/elisp"))
 (add-to-list 'load-path emacs-d)
 (add-to-list 'load-path local-elisp-path)
+(add-to-list 'load-path (concat local-elisp-path "/auto-complete"))
+(add-to-list 'load-path (concat local-elisp-path "/haskell-mode"))
+(add-to-list 'load-path (concat local-elisp-path "/erlang"))
+(add-to-list 'load-path (concat local-elisp-path "/edts"))
 
 ;; Backups
 (defun make-backup-file-name (file)
   (concat emacs-d "/auto-save-list/" (file-name-nondirectory file) "~"))
+
+;; package.el
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
 
 ;; Tabs
 (setq tab-width 4)
@@ -65,7 +75,6 @@
   )
 
 ;; Auto-complete
-(add-to-list 'load-path (concat local-elisp-path "/auto-complete"))
 (defun configure-my-ac-mode ()
   (add-to-list 'ac-dictionary-directories (concat emacs-d "/ac-dict"))
   (ac-config-default)
@@ -79,7 +88,6 @@
 (setq c-default-style "stroustrup" c-basic-offset 4)
 
 ;; Haskell
-(add-to-list 'load-path (concat local-elisp-path "/haskell-mode"))
 (defun haskell-electric-pair ()
   (define-key haskell-mode-map "(" 'electric-pair)
   (define-key haskell-mode-map "[" 'electric-pair)
@@ -93,7 +101,6 @@
   )
 
 (defun configure-my-haskell-mode ()
-  (soft-require 'inf-haskell)
   (soft-require 'speedbar (lambda () (speedbar-add-supported-extension ".hs")))
   (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
@@ -108,8 +115,6 @@
   )
 
 (defun configure-my-erlang-mode ()
-  (add-to-list 'load-path (concat local-elisp-path "/erlang"))
-  (add-to-list 'load-path (concat local-elisp-path "/edts"))
   (setq erlang-bin-dir (concat erlang-root-dir "/bin"))
   (setq exec-path (cons erlang-bin-dir exec-path))
   (soft-require 'erlang-start)
