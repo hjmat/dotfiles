@@ -29,8 +29,11 @@
 
 ;; package.el
 (require 'package)
+(when (< emacs-major-version 24)
+  (add-to-list 'package-archives
+               '("gnu" . "http://elpa.gnu.org/packages/")))
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
 ;; Tabs
@@ -48,6 +51,8 @@
 (line-number-mode 1)
 (column-number-mode 1)
 (setq-default show-trailing-whitespace t)
+(set-face-attribute 'default nil :family "Courier")
+(set-face-attribute 'default nil :height 120)
 
 ;; Parenthesis matching
 (show-paren-mode t)
@@ -106,6 +111,8 @@
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'haskell-mode-hook 'haskell-electric-pair)
   (soft-require 'auto-complete-config 'configure-haskell-with-ac-mode)
+  (autoload 'ghc-init "ghc" nil t)
+  (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
   )
 (soft-require 'haskell-mode 'configure-my-haskell-mode)
 
