@@ -3,8 +3,6 @@
 ;; Dependencies:
 ;;   - haskell-mode     https://github.com/haskell/haskell-mode
 ;;   - auto-complete    http://cx4a.org/software/auto-complete/
-;;   - erlang-mode      packaged with erlang otp
-;;   - edts             https://github.com/tjarvstrand/edts
 ;;
 ;; Paths
 ;;   - ~/.emacs.d is the assumed root for all resources
@@ -20,8 +18,6 @@
 (add-to-list 'load-path local-elisp-path)
 (add-to-list 'load-path (concat local-elisp-path "/auto-complete"))
 (add-to-list 'load-path (concat local-elisp-path "/haskell-mode"))
-(add-to-list 'load-path (concat local-elisp-path "/erlang"))
-(add-to-list 'load-path (concat local-elisp-path "/edts"))
 
 ;; Backups
 (defun make-backup-file-name (file)
@@ -51,8 +47,11 @@
 (line-number-mode 1)
 (column-number-mode 1)
 (setq-default show-trailing-whitespace t)
-(set-face-attribute 'default nil :family "Courier")
-(set-face-attribute 'default nil :height 120)
+
+(if (eq system-type 'darwin)
+    (set-frame-font "-apple-dejavu sans mono-medium-r-normal--0-0-0-0-m-0-mac-roman")
+  (set-frame-font "courier new-12")
+  )
 
 ;; Parenthesis matching
 (show-paren-mode t)
@@ -66,11 +65,18 @@
 
 ;; Soft require
 (defun soft-require (f &optional cfg-fun)
-  "If the feature f exists, load and configure it with the function cfg-fun"
+  "If the feature f exists, load it use cfg-fun for configuration"
   (when (require f nil t)
     (when cfg-fun (funcall cfg-fun))
       (message "'%s' loaded" f))
   )
+
+;; Column indicator
+(defun configure-fci ()
+  (setq fci-rule-column 80)
+  (setq fci-rule-use-dashes t)
+  )
+(soft-require 'fill-column-indicator 'configure-fci)
 
 ;; Electric pair
 (defun electric-pair ()
@@ -90,7 +96,11 @@
 ;; Language customizations -----------------------------------------------------
 
 ;; C
-(setq c-default-style "stroustrup" c-basic-offset 4)
+(defun my-c-mode-hook ()
+  (setq tab-width 4)
+  )
+
+(add-hook 'c-mode-hook 'my-c-mode-hook)
 
 ;; Haskell
 (defun haskell-electric-pair ()
@@ -106,31 +116,14 @@
   )
 
 (defun configure-my-haskell-mode ()
+  (custom-set-variables
+   '(haskell-mode-hook '(turn-on-haskell-indentation)))
   (soft-require 'speedbar (lambda () (speedbar-add-supported-extension ".hs")))
   (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'haskell-mode-hook 'haskell-electric-pair)
   (soft-require 'auto-complete-config 'configure-haskell-with-ac-mode)
-  (autoload 'ghc-init "ghc" nil t)
-  (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
   )
 (soft-require 'haskell-mode 'configure-my-haskell-mode)
-
-;; Erlang with EDTS
-(when (getenv "ERLANG_HOME")
-    (setq erlang-root-dir (getenv "ERLANG_HOME"))
-  )
-
-(defun configure-my-erlang-mode ()
-  (setq erlang-bin-dir (concat erlang-root-dir "/bin"))
-  (setq exec-path (cons erlang-bin-dir exec-path))
-  (soft-require 'erlang-start)
-  (soft-require 'edts-start)
-)
-
-(when (boundp 'erlang-root-dir)
-  (configure-my-erlang-mode)
-  )
 
 ;; End of language customizations ----------------------------------------------
 
